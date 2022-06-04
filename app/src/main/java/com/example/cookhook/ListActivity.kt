@@ -1,6 +1,5 @@
 package com.example.cookhook
 
-/*
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -132,4 +131,3 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
         //adapter.notifyItemChanged(position)
     }
 }
-*/

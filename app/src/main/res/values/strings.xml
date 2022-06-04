@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">CookHook</string>
+	<string name="title_activity_list">ListActivity</string>
+    <string name="large_text">
+        "Dlugi text.\n\n"
+
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+        "Dlugi text.\n"
+    </string>
 </resources>

@@ -1,5 +1,5 @@
 package com.example.cookhook
-/*
+
 import android.util.Log
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -52,4 +52,3 @@ class DishAdapter(
         fun onItemClick(position: Int)
     }
 }
-*/
