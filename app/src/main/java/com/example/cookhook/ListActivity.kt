@@ -1,7 +1,7 @@
 package com.example.cookhook
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,7 +84,8 @@ data class Dishes(
 
 class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
 
-    private var mItems: ArrayList<String> = ArrayList<String>()
+    private lateinit var mDishesData: Dishes
+    private var mDishNamesList: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,9 +97,14 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
             dishType = bundle.getString("type")
         }
 
+        val dishesMap = mapOf(
+            "0" to R.string.breakfast,
+            "1" to R.string.soup,
+            "2" to R.string.dinner,
+            "3" to R.string.desert)
         val actionBar = supportActionBar
-        actionBar!!.title = dishType
-        actionBar.setDisplayHomeAsUpEnabled(true)
+        actionBar?.title = dishesMap[dishType]?.let { resources.getString(it) }
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         // https://github.com/Kotlin/kotlinx.serialization#android
         // https://kotlinlang.org/docs/serialization.html#example-json-serialization
@@ -107,17 +113,15 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
             it.readText()
         }
 
-        Log.i("info", "1 test")
-        val dishesArray = Json.decodeFromString<Dishes>(dishesJsonData)
-        Log.i("info", "2 test")
-        for (dish in dishesArray.dishes) {
-            if (dish.meal == "0") {                 // TODO we need to pass number not string from MainActivity
-                mItems.add(dish.name)
+        mDishesData = Json.decodeFromString<Dishes>(dishesJsonData)
+        for (dish in mDishesData.dishes) {
+            if (dish.meal == dishType) {
+                mDishNamesList.add(dish.name)
             }
         }
 
         // https://gist.github.com/codinginflow/d1f55000c62a82d998234730267b3e0a
-        val dishAdapter = DishAdapter(mItems!!, this)
+        val dishAdapter = DishAdapter(mDishNamesList!!, this)
         val recyclerView = findViewById<RecyclerView>(R.id.dishRecyclerView)
         recyclerView.adapter = dishAdapter
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -125,9 +129,29 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        val clickedItem = mItems?.get(position)
-        Toast.makeText(this, "-> $clickedItem <-", Toast.LENGTH_SHORT).show()
-        //clickedItem.text1 = "Clicked"
-        //adapter.notifyItemChanged(position)
+        val clickedDishName = mDishNamesList?.get(position)
+        val intent = Intent(this, DishActivity::class.java)
+
+        // find clicked dish
+        for (dish in mDishesData.dishes) {
+            if (dish.name == clickedDishName) {
+
+                // TODO prepare ingredients string from dish.ingredients
+                // ...
+                var ingredients: String? = "pomidor\nmarchewka\nkukurydza\nogorek"
+
+                // TODO prepare recipe string from dish.recipe; (name, points) pairs
+                // ...
+                var recipe: String? = "TODO"
+
+                intent.putExtra("name", clickedDishName)
+                intent.putExtra("photo", dish.photo)
+                intent.putExtra("ingredients", ingredients)
+                intent.putExtra("recipe", recipe)
+
+                startActivity(intent)
+                break
+            }
+        }
     }
 }
