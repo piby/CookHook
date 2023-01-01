@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
    }
 
-    fun showDesertList(view: View?) {
+    fun showDessertList(view: View?) {
         val intent = Intent(this, ListActivity::class.java)
         intent.putExtra("type","3")
         startActivity(intent)

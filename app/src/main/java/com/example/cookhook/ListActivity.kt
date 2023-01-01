@@ -16,50 +16,68 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
 
-object StringValueSerializer : KSerializer<IngredientComponentStringValue> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("IngredientComponentStringValue")
+object StringValueSerializer : KSerializer<GenericComponentStringValue> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GenericComponentStringValue")
 
-    override fun deserialize(decoder: Decoder): IngredientComponentStringValue {
+    override fun deserialize(decoder: Decoder): GenericComponentStringValue {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
-        return IngredientComponentStringValue(element.jsonPrimitive.content)
+        return GenericComponentStringValue(element.jsonPrimitive.content)
     }
 
-    override fun serialize(encoder: Encoder, value: IngredientComponentStringValue) {
+    override fun serialize(encoder: Encoder, value: GenericComponentStringValue) {
         encoder.encodeString(value.value)
     }
 }
 
-object IntValueSerializer : KSerializer<IngredientComponentIntValue> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("IngredientComponentIntValue")
+object IntValueSerializer : KSerializer<GenericComponentIntValue> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GenericComponentIntValue")
 
-    override fun deserialize(decoder: Decoder): IngredientComponentIntValue {
+    override fun deserialize(decoder: Decoder): GenericComponentIntValue {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
-        return IngredientComponentIntValue(element.jsonPrimitive.int)
+        return GenericComponentIntValue(element.jsonPrimitive.int)
     }
 
-    override fun serialize(encoder: Encoder, value: IngredientComponentIntValue) {
+    override fun serialize(encoder: Encoder, value: GenericComponentIntValue) {
         encoder.encodeInt(value.value)
     }
 }
 
-object IngredientComponentSerializer : JsonContentPolymorphicSerializer<IngredientComponent>(IngredientComponent::class) {
-    override fun selectDeserializer(element: JsonElement) = when {
-        element.jsonPrimitive.isString -> IngredientComponentStringValue.serializer()
-        else -> IngredientComponentIntValue.serializer()
+object FloatValueSerializer : KSerializer<GenericComponentFloatValue> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GenericComponentFloatValue")
+
+    override fun deserialize(decoder: Decoder): GenericComponentFloatValue {
+        require(decoder is JsonDecoder)
+        val element = decoder.decodeJsonElement()
+        return GenericComponentFloatValue(element.jsonPrimitive.float)
+    }
+
+    override fun serialize(encoder: Encoder, value: GenericComponentFloatValue) {
+        encoder.encodeFloat(value.value)
     }
 }
 
-@Serializable(with = IngredientComponentSerializer::class)
-sealed class IngredientComponent
+object GenericComponentSerializer : JsonContentPolymorphicSerializer<GenericComponent>(GenericComponent::class) {
+    override fun selectDeserializer(element: JsonElement) = when {
+        element.jsonPrimitive.isString -> GenericComponentStringValue.serializer()
+        "." in element.toString() -> GenericComponentFloatValue.serializer()
+        else -> GenericComponentIntValue.serializer()
+    }
+}
+
+@Serializable(with = GenericComponentSerializer::class)
+sealed class GenericComponent
 
 // https://stackoverflow.com/questions/64529032/deserialize-json-array-with-different-values-type-with-kotlinx-serialization-lib
 @Serializable(with = StringValueSerializer::class)
-class IngredientComponentStringValue(val value: String) : IngredientComponent()
+class GenericComponentStringValue(val value: String) : GenericComponent()
 
 @Serializable(with = IntValueSerializer::class)
-class IngredientComponentIntValue(val value: Int) : IngredientComponent()
+class GenericComponentIntValue(val value: Int) : GenericComponent()
+
+@Serializable(with = FloatValueSerializer::class)
+class GenericComponentFloatValue(val value: Float) : GenericComponent()
 
 @Serializable
 data class RecipeSection(
@@ -72,19 +90,43 @@ data class DishData(
     val name: String,
     val meal: String,
     val photo: String,
-    val ingredients: List<List<IngredientComponent>>,
+    val ingredients: List<List<GenericComponent>>,
     val recipe: List<RecipeSection>,
     val categories: List<Int>
 )
 
+// UnitData
+//     val id: Int,
+//     val baseForm: String,
+//     val fractionForm: String,
+//     val fewForm: String,
+//     val manyForm: String
+//
+// IngredientTypesData
+//     val id: Int,
+//     val name: String
+//
+// IngredientData
+//     val id: Int,
+//     val name: String,
+//     val category: Int,
+//     val defaultQuantity: Int,
+//     val defaultUnit: Int,
+//     val unused: String
+
 @Serializable
 data class Dishes(
+    val units: List<List<GenericComponent>>,
+    val categories: List<String>,
+    val ingredient_types: List<List<GenericComponent>>,
+    val ingredients: List<List<GenericComponent>>,
     val dishes: List<DishData>
 )
 
 class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
 
     private lateinit var mDishesData: Dishes
+
     private var mDishNamesList: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,15 +143,15 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
             "0" to R.string.breakfast,
             "1" to R.string.soup,
             "2" to R.string.dinner,
-            "3" to R.string.desert)
+            "3" to R.string.dessert)
         val actionBar = supportActionBar
         actionBar?.title = dishesMap[dishType]?.let { resources.getString(it) }
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         // https://github.com/Kotlin/kotlinx.serialization#android
         // https://kotlinlang.org/docs/serialization.html#example-json-serialization
-        val bufferReader = application.assets.open("dishes.json").bufferedReader()
-        val dishesJsonData = bufferReader.use {
+        val dishesBufferReader = application.assets.open("dishes.json").bufferedReader()
+        val dishesJsonData = dishesBufferReader.use {
             it.readText()
         }
 
@@ -136,9 +178,26 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
         for (dish in mDishesData.dishes) {
             if (dish.name == clickedDishName) {
 
-                // TODO prepare ingredients string from dish.ingredients
-                // ...
-                var ingredients: String? = "pomidor\nmarchewka\nkukurydza\nogorek"
+                // prepare ingredients string from dish.ingredients
+                var ingredients: String? = ""
+                for (dishIngredient in dish.ingredients) {
+                    var unitID = dishIngredient[0] as GenericComponentIntValue
+                    var ingredientID = dishIngredient[1] as GenericComponentIntValue
+                    var quantity = dishIngredient[2] as GenericComponentStringValue
+
+                    var globalUnit = mDishesData.units[unitID.value - 1]
+                    var unitName = globalUnit[1] as GenericComponentStringValue
+
+                    // TODO select proper unit form based on quantity
+
+                    var globalIngredient = mDishesData.ingredients[ingredientID.value - 1]
+                    var ingredientName = globalIngredient[1] as GenericComponentStringValue
+
+                    ingredients += ingredientName.value
+                    ingredients += ": " + quantity.value
+                    ingredients += " " + unitName.value
+                    ingredients += "\n "
+                }
 
                 // TODO prepare recipe string from dish.recipe; (name, points) pairs
                 // ...

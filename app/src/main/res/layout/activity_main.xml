@@ -36,7 +36,7 @@
             android:backgroundTint="#FFFFFF"
             android:onClick="showSoupList"
             android:contentDescription="Soup"
-            app:srcCompat="@drawable/ic_breakfast" />
+            app:srcCompat="@drawable/ic_soup" />
 
         <ImageButton
             android:id="@+id/dinnerButton"
@@ -46,18 +46,18 @@
             android:backgroundTint="#FFFFFF"
             android:onClick="showDinnerList"
             android:contentDescription="Dinner"
-            app:srcCompat="@drawable/ic_breakfast" />
+            app:srcCompat="@drawable/ic_dinner" />
 
         <ImageButton
-            android:id="@+id/desertButton"
+            android:id="@+id/dessertButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
             android:backgroundTint="#FFFFFF"
-            android:onClick="showDesertList"
-            android:contentDescription="Desert"
-            app:srcCompat="@drawable/ic_breakfast" />
+            android:onClick="showDessertList"
+            android:contentDescription="Dessert"
+            app:srcCompat="@drawable/ic_dessert" />
 
     </LinearLayout>
 
