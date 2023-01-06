@@ -19,11 +19,11 @@ class DishActivity : AppCompatActivity() {
 
             // TODO load photo
 
-            // TODO print ingredients
             val dishIngredientsTextView = findViewById<TextView>(R.id.dishIngredients)
             dishIngredientsTextView.text = bundle.getString("ingredients")
 
-            // TODO print recipe
+            val dishRecipeTextView = findViewById<TextView>(R.id.dishRecipe)
+            dishRecipeTextView.text = bundle.getString("recipe")
         }
 
         val actionBar = supportActionBar

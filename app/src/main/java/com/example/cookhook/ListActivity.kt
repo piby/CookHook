@@ -2,7 +2,6 @@ package com.example.cookhook
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -186,24 +185,50 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                     var quantity = dishIngredient[2] as GenericComponentStringValue
 
                     var globalUnit = mDishesData.units[unitID.value - 1]
-                    var unitName = globalUnit[1] as GenericComponentStringValue
+                    var unitName = globalUnit[1]
 
-                    // TODO select proper unit form based on quantity
+                    // select proper form of unit based on quantity
+                    var quantityValue = quantity.value
+                    var quantityAsDouble = quantity.value.toDouble()
+                    var quantityAsInt = quantityAsDouble.toInt()
+                    if ((quantityAsDouble - quantityAsInt.toDouble()) > 0.0) {
+                        unitName = globalUnit[2]        // fraction
+                    }
+                    else {
+                        quantityValue = quantityAsInt.toString()
+                        if (quantityAsInt > 5) {
+                            unitName = globalUnit[4]    // more than 5
+                        }
+                        else if (quantityAsInt > 1) {
+                            unitName = globalUnit[3]    // 2, 3 or 4
+                        }
+                    }
+                    unitName = unitName as GenericComponentStringValue
 
                     var globalIngredient = mDishesData.ingredients[ingredientID.value - 1]
                     var ingredientName = globalIngredient[1] as GenericComponentStringValue
 
                     ingredients += ingredientName.value
-                    ingredients += ": " + quantity.value
-                    ingredients += " " + unitName.value
+                    ingredients += ": $quantityValue "
+                    ingredients += unitName.value
                     ingredients += "\n "
                 }
 
-                // TODO prepare recipe string from dish.recipe; (name, points) pairs
-                // ...
-                var recipe: String? = "TODO"
+                // prepare recipe string; (name, points) pairs
+                var recipe: String? = ""
+                for (dishRecipe in dish.recipe) {
 
-                intent.putExtra("name", clickedDishName)
+                    if (dishRecipe.name != "opis") {
+                        recipe += dishRecipe.name + "\n"
+                    }
+
+                    var pointCounter = 1
+                    for (pointText in dishRecipe.points) {
+                        recipe += "$pointCounter. $pointText\n"
+                        pointCounter++
+                    }
+                }
+         intent.putExtra("name", clickedDishName)
                 intent.putExtra("photo", dish.photo)
                 intent.putExtra("ingredients", ingredients)
                 intent.putExtra("recipe", recipe)
