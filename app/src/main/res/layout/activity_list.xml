@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="10sp"
+    android:layout_marginRight="10sp"
     tools:context=".ListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dishRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
         tools:layout_editor_absoluteX="10dp"
         tools:layout_editor_absoluteY="10dp"
         tools:ignore="MissingConstraints" />

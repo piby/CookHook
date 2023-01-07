@@ -1,35 +1,38 @@
 package com.example.cookhook
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.TaskStackBuilder
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
 class DishActivity : AppCompatActivity() {
+
+    private var mDishType: String? = "0"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dish)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        var photoName: String? = ""
-        val bundle: Bundle? = intent.extras
-        if (bundle != null) {
-            photoName = bundle.getString("photo")
+        val bundle: Bundle = intent.extras ?: return
+        supportActionBar?.title = bundle.getString("name")
+        mDishType = bundle.getString("type").toString()
 
-            val dishNameTextView = findViewById<TextView>(R.id.dishName)
-            dishNameTextView.text = bundle.getString("name")
+        //var photoName = bundle.getString("photo")
+        // TODO load photo
 
-            // TODO load photo
+        val dishIngredientsTextView = findViewById<TextView>(R.id.dishIngredients)
+        dishIngredientsTextView.text = bundle.getString("ingredients")
 
-            val dishIngredientsTextView = findViewById<TextView>(R.id.dishIngredients)
-            dishIngredientsTextView.text = bundle.getString("ingredients")
+        val dishRecipeTextView = findViewById<TextView>(R.id.dishRecipe)
+        dishRecipeTextView.text = bundle.getString("recipe")
+    }
 
-            val dishRecipeTextView = findViewById<TextView>(R.id.dishRecipe)
-            dishRecipeTextView.text = bundle.getString("recipe")
-        }
-
-        val actionBar = supportActionBar
-        actionBar?.title = "Danie"
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // TODO display photo and print all text
+    override fun onSupportNavigateUp(): Boolean {
+        val intent = Intent(this, ListActivity::class.java)
+        intent.putExtra("type", mDishType)
+        startActivity(intent)
+        return true
     }
 }

@@ -9,6 +9,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
         tools:ignore="MissingConstraints">
 
         <ScrollView
@@ -19,13 +21,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/dishName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -38,12 +33,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Składniki"
-                    android:textSize="20sp" />
+                    android:textSize="25sp" />
 
                 <TextView
                     android:id="@+id/dishIngredients"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="TextView" />
 
                 <TextView
@@ -51,12 +47,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Przepis"
-                    android:textSize="20sp" />
+                    android:textSize="25sp" />
 
                 <TextView
                     android:id="@+id/dishRecipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="TextView" />
 
             </LinearLayout>

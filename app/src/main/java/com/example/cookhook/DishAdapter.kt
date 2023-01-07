@@ -1,6 +1,5 @@
 package com.example.cookhook
 
-import android.util.Log
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup

@@ -2,6 +2,7 @@ package com.example.cookhook
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import java.util.logging.Level
 
 
 object StringValueSerializer : KSerializer<GenericComponentStringValue> {
@@ -128,24 +130,25 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
 
     private var mDishNamesList: ArrayList<String> = ArrayList<String>()
 
+    private var mDishType: String? = "0"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        var dishType: String? = ""
         val bundle: Bundle? = intent.extras
         if (bundle != null) {
-            dishType = bundle.getString("type")
+            mDishType = bundle.getString("type")
         }
 
         val dishesMap = mapOf(
             "0" to R.string.breakfast,
             "1" to R.string.soup,
             "2" to R.string.dinner,
-            "3" to R.string.dessert)
-        val actionBar = supportActionBar
-        actionBar?.title = dishesMap[dishType]?.let { resources.getString(it) }
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+            "3" to R.string.dessert
+        )
+        dishesMap[mDishType]?.let { supportActionBar!!.setTitle(it) }
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // https://github.com/Kotlin/kotlinx.serialization#android
         // https://kotlinlang.org/docs/serialization.html#example-json-serialization
@@ -156,7 +159,7 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
 
         mDishesData = Json.decodeFromString<Dishes>(dishesJsonData)
         for (dish in mDishesData.dishes) {
-            if (dish.meal == dishType) {
+            if (dish.meal == mDishType) {
                 mDishNamesList.add(dish.name)
             }
         }
@@ -180,17 +183,17 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                 // prepare ingredients string from dish.ingredients
                 var ingredients: String? = ""
                 for (dishIngredient in dish.ingredients) {
-                    var unitID = dishIngredient[0] as GenericComponentIntValue
-                    var ingredientID = dishIngredient[1] as GenericComponentIntValue
-                    var quantity = dishIngredient[2] as GenericComponentStringValue
+                    val unitID = dishIngredient[0] as GenericComponentIntValue
+                    val ingredientID = dishIngredient[1] as GenericComponentIntValue
+                    val quantity = dishIngredient[2] as GenericComponentStringValue
 
-                    var globalUnit = mDishesData.units[unitID.value - 1]
+                    val globalUnit = mDishesData.units[unitID.value - 1]
                     var unitName = globalUnit[1]
 
                     // select proper form of unit based on quantity
                     var quantityValue = quantity.value
-                    var quantityAsDouble = quantity.value.toDouble()
-                    var quantityAsInt = quantityAsDouble.toInt()
+                    val quantityAsDouble = quantity.value.toDouble()
+                    val quantityAsInt = quantityAsDouble.toInt()
                     if ((quantityAsDouble - quantityAsInt.toDouble()) > 0.0) {
                         unitName = globalUnit[2]        // fraction
                     }
@@ -205,13 +208,13 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                     }
                     unitName = unitName as GenericComponentStringValue
 
-                    var globalIngredient = mDishesData.ingredients[ingredientID.value - 1]
-                    var ingredientName = globalIngredient[1] as GenericComponentStringValue
+                    val globalIngredient = mDishesData.ingredients[ingredientID.value - 1]
+                    val ingredientName = globalIngredient[1] as GenericComponentStringValue
 
                     ingredients += ingredientName.value
                     ingredients += ": $quantityValue "
                     ingredients += unitName.value
-                    ingredients += "\n "
+                    ingredients += "\n"
                 }
 
                 // prepare recipe string; (name, points) pairs
@@ -228,7 +231,8 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                         pointCounter++
                     }
                 }
-         intent.putExtra("name", clickedDishName)
+                intent.putExtra("name", clickedDishName)
+                intent.putExtra("type", mDishType)
                 intent.putExtra("photo", dish.photo)
                 intent.putExtra("ingredients", ingredients)
                 intent.putExtra("recipe", recipe)

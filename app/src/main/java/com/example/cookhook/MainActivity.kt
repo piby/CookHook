@@ -14,26 +14,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showBreakfastList(view: View?) {
-        val intent = Intent(this, ListActivity::class.java)
-        intent.putExtra("type", "0")
-        startActivity(intent)
+        showDishList("0")
     }
 
     fun showSoupList(view: View?) {
-        val intent = Intent(this, ListActivity::class.java)
-        intent.putExtra("type","1")
-        startActivity(intent)
+        showDishList("1")
     }
 
     fun showDinnerList(view: View?) {
-        val intent = Intent(this, ListActivity::class.java)
-        intent.putExtra("type","2")
-        startActivity(intent)
-   }
+        showDishList("2")
+    }
 
     fun showDessertList(view: View?) {
+       showDishList("3")
+    }
+
+    private fun showDishList(type: String) {
         val intent = Intent(this, ListActivity::class.java)
-        intent.putExtra("type","3")
+        intent.putExtra("type", type)
         startActivity(intent)
-   }
+    }
 }
