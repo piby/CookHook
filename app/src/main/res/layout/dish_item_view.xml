@@ -16,8 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="6dp"
             android:textColor="@color/black"
-            android:textSize="28dp"
+            android:textSize="24sp"
             tools:text="Item">
         </TextView>
 

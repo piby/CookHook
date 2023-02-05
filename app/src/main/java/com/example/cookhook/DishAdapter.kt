@@ -1,5 +1,6 @@
 package com.example.cookhook
 
+import android.graphics.Color
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
@@ -36,16 +37,13 @@ class DishAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.text = dishList[position]
+
+        // set different background for every other line
+        //val color = if (position % 2 == 1) "#ffffffff" else "#ccccccff"
+        //holder.textView.setBackgroundColor(Color.parseColor(color));
     }
 
     override fun getItemCount() = dishList.size
-
-    //fun updateData(scanResult: ArrayList<String>) {
-    //    dishList.clear()
-    //    notifyDataSetChanged()
-    //    dishList.addAll(scanResult)
-    //    notifyDataSetChanged()
-    //}
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
