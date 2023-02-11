@@ -1,10 +1,10 @@
 package com.example.cookhook
 
-import android.app.TaskStackBuilder
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 
 class DishActivity : AppCompatActivity() {
 
@@ -26,7 +26,7 @@ class DishActivity : AppCompatActivity() {
         dishIngredientsTextView.text = bundle.getString("ingredients")
 
         val dishRecipeTextView = findViewById<TextView>(R.id.dishRecipe)
-        dishRecipeTextView.text = bundle.getString("recipe")
+        dishRecipeTextView.text = HtmlCompat.fromHtml(bundle.getString("recipe").toString(), HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
     override fun onSupportNavigateUp(): Boolean {

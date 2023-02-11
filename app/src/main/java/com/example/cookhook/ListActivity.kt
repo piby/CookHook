@@ -221,16 +221,19 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                 var recipe: String? = ""
                 for (dishRecipe in dish.recipe) {
 
-                    if (dishRecipe.name != "opis") {
-                        recipe += dishRecipe.name + "\n"
+                    var name: String? = dishRecipe.name
+                    if (name == "opis")
+                        name = "Przepis"
+                    recipe += "<big>" + name + "</big><br><br>"
+
+                    dishRecipe.points.forEachIndexed { index, pointText ->
+                        val i = index + 1
+                        recipe += "<b>$i.</b> $pointText<br>"
                     }
 
-                    var pointCounter = 1
-                    for (pointText in dishRecipe.points) {
-                        recipe += "$pointCounter. $pointText\n"
-                        pointCounter++
-                    }
+                    recipe += "<br>"
                 }
+
                 intent.putExtra("name", clickedDishName)
                 intent.putExtra("type", mDishType)
                 intent.putExtra("photo", dish.photo)
