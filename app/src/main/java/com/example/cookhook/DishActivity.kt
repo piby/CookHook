@@ -2,6 +2,7 @@ package com.example.cookhook
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
@@ -19,8 +20,15 @@ class DishActivity : AppCompatActivity() {
         supportActionBar?.title = bundle.getString("name")
         mDishType = bundle.getString("type").toString()
 
-        //var photoName = bundle.getString("photo")
-        // TODO load photo
+        var photoName = bundle.getString("photo")
+        if ((photoName != null) and (photoName?.length!! > 5)) {
+            photoName = photoName.dropLast(4)
+            val resourceId = resources.getIdentifier(photoName, "drawable", packageName)
+            if (resourceId != 0) {
+                val dishImageImageView = findViewById<ImageView>(R.id.dishImage)
+                dishImageImageView.setImageResource(resourceId)
+            }
+        }
 
         val dishIngredientsTextView = findViewById<TextView>(R.id.dishIngredients)
         dishIngredientsTextView.text = bundle.getString("ingredients")

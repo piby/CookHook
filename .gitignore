@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/src/main/res/drawable/*.jpg
+/app/src/test/
+/gradle
+.idea/
+/app/proguard-rules.pro
+/app/src/androidTest/

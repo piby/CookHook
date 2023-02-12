@@ -163,6 +163,7 @@ class ListActivity : AppCompatActivity(), DishAdapter.OnItemClickListener {
                 mDishNamesList.add(dish.name)
             }
         }
+        mDishNamesList.sort()
 
         // https://gist.github.com/codinginflow/d1f55000c62a82d998234730267b3e0a
         val dishAdapter = DishAdapter(mDishNamesList!!, this)
